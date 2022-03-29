@@ -2,50 +2,75 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL/SDL_image.h>
-#include "minimap.h"
-#include <SDL/SDL_ttf.h>
+#include "background.h"
+#include "button.h"
+
 int main(int argc, char* argv[])
 {
-
- SDL_Init(SDL_INIT_VIDEO);
- SDL_Surface *screen;
- background back;
- minimap minimap,minihero;
- int done=0;
- screen=SDL_SetVideoMode(1600,600,32,SDL_HWSURFACE | SDL_DOUBLEBUF);
-
- if(!screen)
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Surface *screen;
+    image backg;
+    int done=0;
+    int selected=0;
+    screen=SDL_SetVideoMode(750,500,32, SDL_HWSURFACE | SDL_DOUBLEBUF );
+  
+    if(!screen)
       {
              return 1;
       }
- initback(&back);
-init_minimap(&minimap);
-init_minimap(&minihero);
-init_minimap(&hero);
- while(done==0){
-displayback(back,screen);
-blit_minimap(minimap,screen);
-blit_minimap(minihero,screen);
-blit_minimap(hero,screen);
-SDL_Flip(screen);
-  SDL_Event event;
-  SDL_PollEvent(&event);
-  switch (event.type)
+    
+
+ initbackground(&backg);
+
+    while(!done)
+     {
+          display(backg,screen);
+        
+          SDL_Flip(screen);
+           SDL_Event event;
+			SDL_PollEvent(&event);
+			switch (event.type)
 			{
 				case SDL_QUIT:
 					done=1;
-					break;	}
- 
+					break;	
+		                case SDL_KEYDOWN: 
+                                        if(event.key.keysym.sym==SDLK_ESCAPE){
+                                          done=1;
+                                          break;
+                                           }
+                                        if((event.key.keysym.sym==SDLK_DOWN)&&(selected==0)||(selected==3)){
+                                         
+                                         
+                                         SDL_Flip(screen);
+                                         display(backg,screen);
+                                        
+                                         selected=1;
+                                         break;
+                                        }
+                                        else if((event.key.keysym.sym==SDLK_DOWN)&&(selected==1)){
+                                       
+                                        displaybutton(settingsR,screen);
+                                        SDL_Flip(screen);
+                                         display(backg,screen);
+                                        
+                                        selected=2;
+                                         break;
+                                        }
+                                       else if((event.key.keysym.sym==SDLK_DOWN)&&(selected==2)){
+                                       
+                                        SDL_Flip(screen);
+                                         display(backg,screen);
+                                        
+                                        selected=3;
+                                        break;
+                                        }
+                                
+			}
 
+      }
 
-
-  }
-
-free_minimap(back);
-free_minimap(minimap);
-free_minimap(minihero);
+freeimg(backg);
 SDL_Quit();
 return 0;
 }
-
-
